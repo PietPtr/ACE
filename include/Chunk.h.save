@@ -1,0 +1,14 @@
+#ifndef CHUNK_H
+#define CHUNK_H
+#include 
+class Chunk
+{
+    public:
+        Chunk();
+        void setTile(int x, int y, int block);
+    protected:
+    private:
+        Tile[16*16] tiles;
+};
+
+#endif // CHUNK_H
