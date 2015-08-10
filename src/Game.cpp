@@ -43,11 +43,12 @@ void Game::update()
             {
                 sfx.at(1)->play();
                 world.getWorldMap().saveToFile("screenshots/map" + std::to_string(totalTime.asMicroseconds()) + ".png");
+                world.setSeed(randint(0, 65536));
+                world.generateWorld();
             }
             if (event.key.code == Keyboard::F)
             {
                 showFPS = !showFPS;
-                window->setFramerateLimit(1);
             }
         }
         if (event.type == Event::Resized)
@@ -141,6 +142,13 @@ void Game::draw()
         pix.setPosition(Vector2f(x, Y));
         window->draw(pix);
     }*/
+    Texture mapTexture;
+    mapTexture.loadFromImage(world.getWorldMap());
+    Sprite worldmap;
+    worldmap.setPosition(Vector2f(-256, -256));
+    worldmap.setTexture(mapTexture);
+    window->draw(worldmap);
+
 
     window->display();
 }

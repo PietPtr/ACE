@@ -1,0 +1,13 @@
+tile data
+textureIndex/N
+offsetX
+offsetY
+tileSizeX
+tileSizeY
+unwalkableOffsetX
+unwalkableOffsetY
+unwalkableSizeX
+unwalkableSizeY
+r
+g
+b

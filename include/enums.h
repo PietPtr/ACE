@@ -6,7 +6,8 @@ enum TileName {
     TREE,
     SEA_WATER,
     LAKE_WATER,
-    RIVER_WATER
+    RIVER_WATER,
+    SAND
 };
 
 #endif // ENUMS_H_INCLUDED
