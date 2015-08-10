@@ -1,6 +1,5 @@
 #include <SFML/Graphics.hpp>
 #include "Game.h"
-#include "Chunk.h"
 #include "World.h"
 #include <dirent.h>
 #include <unistd.h>
