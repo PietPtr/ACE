@@ -1,6 +1,0 @@
-#include "tile-iGrass.h"
-
-Grass::Grass()
-{
-    //ctor
-}
