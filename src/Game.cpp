@@ -67,7 +67,7 @@ void Game::update()
         std::cout << 1 / dt.asSeconds() << "\n";
     }
 
-    float SPEED = 16;
+    float SPEED = 15;
     if (Keyboard::isKeyPressed(Keyboard::W))
         viewPos.y -= SPEED;
     if (Keyboard::isKeyPressed(Keyboard::A))
@@ -90,7 +90,7 @@ void Game::draw()
     //view.zoom(0.5);
     if (Keyboard::isKeyPressed(Keyboard::Period))
     {
-        view.zoom(2);
+        view.zoom(1/64.0);
     }
 
     window->setView(view);
@@ -147,7 +147,6 @@ void Game::draw()
     worldmap.setPosition(Vector2f(-256, -256));
     worldmap.setTexture(mapTexture);
     window->draw(worldmap);
-
 
     window->display();
 }
@@ -238,8 +237,11 @@ void Game::loadTileData()
         window->close();
     }
 
+    std::sort(textFileNames.begin(), textFileNames.end());
+
     for (int i = 0; i < textFileNames.size(); i++)
     {
+        std::cout << textFileNames.at(i) << "\n";
         //std::ifstream file("/tile-data/grass");// + textFileNames.at(i));
         std::string filename = "tile-data/" + textFileNames.at(i);
         std::ifstream file(filename);
