@@ -41,7 +41,7 @@ void Game::update()
             if (event.key.code == Keyboard::P)
             {
                 sfx.at(1)->play();
-                world.getWorldMap().saveToFile("screenshots/map" + std::to_string(totalTime.asMicroseconds()) + ".png");
+                world.getWorldMap().saveToFile("screenshots/map" + std::to_string(world.getSeed()) + ".png");
                 world.setSeed(randint(0, 65536));
                 world.generateWorld();
             }
@@ -67,7 +67,7 @@ void Game::update()
         std::cout << 1 / dt.asSeconds() << "\n";
     }
 
-    float SPEED = 15;
+    float SPEED = 3;
     if (Keyboard::isKeyPressed(Keyboard::W))
         viewPos.y -= SPEED;
     if (Keyboard::isKeyPressed(Keyboard::A))

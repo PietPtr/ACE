@@ -7,7 +7,8 @@ enum TileName {
     SEA_WATER,
     LAKE_WATER,
     RIVER_WATER,
-    BEACH
+    BEACH,
+    EDGE
 };
 
 #endif // ENUMS_H_INCLUDED

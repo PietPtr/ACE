@@ -16,6 +16,7 @@ class World
         TileName getTile(int x, int y);            // These set and get tiles by global
         void setTile(int x, int y, TileName tile); // coordinates (0, 0) to (511, 511)
         void setSeed(int _seed) { seed = _seed; }
+        int getSeed() { return seed; }
 
         void generateGrass();
         void generateSea();
@@ -23,6 +24,7 @@ class World
         void generateRivers();
         void generateRock();
         void generateTrees();
+        void generationCleanup();
     protected:
     private:
         int seed;

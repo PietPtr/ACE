@@ -29,7 +29,14 @@ void World::setTile(int x, int y, TileName tile)
 
 TileName World::getTile(int x, int y)
 {
-    return (TileName)tiles[y * WORLDSIZE + x];
+    if (x < 0 || x > WORLDSIZE || y < 0 || y > WORLDSIZE)
+    {
+        return EDGE;
+    }
+    else
+    {
+        return (TileName)tiles[y * WORLDSIZE + x];
+    }
 }
 
 void World::generateWorld()
@@ -40,6 +47,7 @@ void World::generateWorld()
     generateRivers();
     generateRock();
     generateTrees();
+    generationCleanup();
 }
 
 void World::generateGrass()
@@ -116,7 +124,7 @@ void World::generateLakes()
     {
         for (int sectorY = 0; sectorY < WORLDSIZE - lowestLakeCenter; sectorY += 128)
         {
-            if (randint(1, 100) <= lakeSpawnChance)
+            if (randint(1, 100) <= lakeSpawnChance || (sectorX == 0 && sectorY == 0))
             {
                 int lakex = sectorX + 64 + randint(-maxDistFromSectorCenter, maxDistFromSectorCenter);
                 int lakey = sectorY + 64 + randint(-maxDistFromSectorCenter, maxDistFromSectorCenter);
@@ -163,23 +171,36 @@ void World::generateRivers()
 {
     std::cout << "Generating river.\n";
 
-    float riverx = WORLDSIZE / 2.0 + randint(-WORLDSIZE / 8, WORLDSIZE / 8, seed);
-    float riverFreq = 12.0 + randint(-400, 1400) / 100.0;
-    float riverAmp = 2 + randint(-100, 100) / 100.0;
-    float riverWidth = 2 + randint(0, 1);
-    float riverFreqMod = 64 + randint(-160, 160) / 10.0;
-    float riverAmpMod = 10 + randint(-50, 50) / 10.0;
-    float flowDirection = randint(-1, 1) < 0 ? -1 : 1;
+    float riverx = WORLDSIZE / 2.0 + randint(-WORLDSIZE / 8, WORLDSIZE / 8, seed);  //x position of the river
+    float riverFreq = 12.0 + randint(-400, 1400, seed) / 100.0;                           //base frequency of the sinus wave
+    float riverAmp = 2 + randint(-100, 100, seed) / 100.0;                                //base amplitude of the sinus wave
+    float riverWidth = 2 + randint(0, 1, seed);                                           //base width of the river
+    float riverFreqMod = 64 + randint(-160, 160, seed) / 10.0;                            //rate at which the frequency changes (y / value)
+    float riverAmpMod = 12 + randint(0, 50, seed) / 10.0;                                 //rate at which the amplitude changes (y / value)
+    float riverWidthMod = 30.0 + randint(-50, 50, seed) / 10.0;                           //rate at which the river widens (y / value)
+    float flowDirection = randint(-1, 1, seed) < 0 ? -1 : 1;                              //whether the river first goes left or right
+    float riverSideWidth = 16;
+    float riverStreamOffsetMod = (10.0 + randint(-300, 700, seed) / 100.0) * flowDirection;
 
     for (int y = 0; y < WORLDSIZE; y++)
     {
-        for (int w = 0; w < (riverWidth + y / 30.0); w++)
+        for (int w = -riverSideWidth; w < (riverWidth + y / riverWidthMod) + riverSideWidth; w++)
         {
             int Y = y + 1;
-            int x = riverx + flowDirection * (sin(Y / (riverFreq + (Y / riverFreqMod))) * (riverAmp + (Y / riverAmpMod)) + w);
+            int x = riverx + flowDirection * (sin(Y / (riverFreq + (Y / riverFreqMod))) * (riverAmp + (Y / riverAmpMod)) + w) + (y / riverStreamOffsetMod);
 
-            if (getTile(x, y) != SEA_WATER)
-                setTile(x, y, RIVER_WATER);
+            if (w < (riverWidth + y / riverWidthMod) && w >= 0)
+            {
+                if (getTile(x, y) != SEA_WATER)
+                {
+                    setTile(x, y, RIVER_WATER);
+                }
+            }
+            else
+            {
+                if (getTile(x, y) != SEA_WATER && getTile(x, y) != BEACH)
+                    setTile(x, y, GRASS);
+            }
         }
     }
 }
@@ -192,6 +213,35 @@ void World::generateRock()
 void World::generateTrees()
 {
 
+}
+
+void World::generationCleanup()
+{
+    //remove some rough edges from lakes
+    for (int i = 0; i < 3; i++)
+    {
+        for (int y = 0; y < WORLDSIZE; y++)
+        {
+            for (int x = 0; x < WORLDSIZE; x++)
+            {
+                if (getTile(x, y) == LAKE_WATER)
+                {
+                    int surroundingNonLakeTiles = 0;
+                    if (getTile(x + 1, y) != LAKE_WATER)
+                        surroundingNonLakeTiles++;
+                    if (getTile(x - 1, y) != LAKE_WATER)
+                        surroundingNonLakeTiles++;
+                    if (getTile(x, y + 1) != LAKE_WATER)
+                        surroundingNonLakeTiles++;
+                    if (getTile(x, y - 1) != LAKE_WATER)
+                        surroundingNonLakeTiles++;
+
+                    if (surroundingNonLakeTiles > 2)
+                        setTile(x, y, GRASS);
+                }
+            }
+        }
+    }
 }
 
 void World::printWorld()
