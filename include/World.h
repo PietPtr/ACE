@@ -4,13 +4,15 @@
 #include "Tile.h"
 #include "enums.h"
 
+using namespace sf;
+
 const int WORLDSIZE = 512;
 
 class World
 {
     public:
         World(int seed, std::vector<Tile>* tileDataptr);
-        void generateWorld();
+
         void printWorld();
         Image getWorldMap();
         TileName getTile(int x, int y);            // These set and get tiles by global
@@ -18,6 +20,8 @@ class World
         void setSeed(int _seed) { seed = _seed; }
         int getSeed() { return seed; }
 
+        //Main generation methods
+        void generateWorld();
         void generateGrass();
         void generateSea();
         void generateLakes();
@@ -25,6 +29,8 @@ class World
         void generateRock();
         void generateTrees();
         void generationCleanup();
+        //Auxiliary generation methods
+        void generateCircle(Vector2f position, int radius, TileName tile);
     protected:
     private:
         int seed;

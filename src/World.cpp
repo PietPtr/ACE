@@ -21,8 +21,10 @@ void World::setTile(int x, int y, TileName tile)
 {
     x = x < 0 ? 0 : x;
     y = y < 0 ? 0 : y;
-    x = x > WORLDSIZE ? WORLDSIZE : x;
-    y = y > WORLDSIZE ? WORLDSIZE : y;
+    x = x > WORLDSIZE-1 ? WORLDSIZE-1 : x;
+    y = y > WORLDSIZE-1 ? WORLDSIZE-1 : y;
+
+    //std::cout << "(" << x << "," << y << ") " << tile << ", " << y * WORLDSIZE + x << ", " << (WORLDSIZE * WORLDSIZE) - (y * WORLDSIZE + x) << "\n";
 
     tiles[y * WORLDSIZE + x] = (int)tile;
 }
@@ -42,12 +44,15 @@ TileName World::getTile(int x, int y)
 void World::generateWorld()
 {
     generateGrass();
+    generateRock();
     generateSea();
     generateLakes();
     generateRivers();
-    generateRock();
     generateTrees();
     generationCleanup();
+
+
+    setTile(1024, 1024, ROCK);
 }
 
 void World::generateGrass()
@@ -61,6 +66,42 @@ void World::generateGrass()
             setTile(x, y, GRASS);
         }
     }
+}
+
+void World::generateRock()
+{
+    std::cout <<  "Generating rock.\n";
+    std::vector<Vector2f> rockCenters;
+    int numberOfRock = 15;
+    int rockSpawnChance = 60;
+    float maxRockRadius = 8;
+    float minRockRadius = 4;
+    float secRocksDist = 3;
+    float maxSecondaryRock = 16;
+
+    for (int i = 0; i < numberOfRock; i++)
+    {
+        Vector2f previousRockPos(randint(0, WORLDSIZE, i * i * seed), randint(0, WORLDSIZE, (i + 1) * seed));
+
+        for (int r = 0; r < maxSecondaryRock - randint(0, 3, seed); r++)
+        {
+            previousRockPos.x += randint(-secRocksDist, secRocksDist, i + seed * i);
+            previousRockPos.y += randint(-secRocksDist, secRocksDist, i - seed * (r + 1));
+
+            rockCenters.push_back(previousRockPos);
+        }
+        //std::cout << "X: " << previousRockPos.x << ", Y: " << previousRockPos.y << "\n";
+    }
+
+    for (int i = 0; i < rockCenters.size(); i++)
+    {
+        int radius = randint(minRockRadius, maxRockRadius, seed * i);
+
+
+
+        generateCircle(rockCenters.at(i), radius, ROCK);
+    }
+
 }
 
 void World::generateSea()
@@ -129,15 +170,15 @@ void World::generateLakes()
                 int lakex = sectorX + 64 + randint(-maxDistFromSectorCenter, maxDistFromSectorCenter);
                 int lakey = sectorY + 64 + randint(-maxDistFromSectorCenter, maxDistFromSectorCenter);
 
-                int secLakex = lakex + randint(-secLakeDist, secLakeDist);
-                int secLakey = lakey + randint(-secLakeDist, secLakeDist);
+                int secLakex = lakex + randint(-secLakeDist, secLakeDist, seed + lakex + lakey);
+                int secLakey = lakey + randint(-secLakeDist, secLakeDist, seed + lakex + lakey);
 
                 lakeCenters.push_back(Vector2f(lakex, lakey));
                 lakeCenters.push_back(Vector2f(secLakex, secLakey));
                 if(randint(1, 2) == 1)
                 {
-                    lakeCenters.push_back(Vector2f(secLakex + randint(-secLakeDist, secLakeDist),
-                                                   secLakey + randint(-secLakeDist, secLakeDist)));
+                    lakeCenters.push_back(Vector2f(secLakex + randint(-secLakeDist, secLakeDist, seed + lakex + lakey),
+                                                   secLakey + randint(-secLakeDist, secLakeDist, seed + lakex + lakey)));
                 }
             }
         }
@@ -145,25 +186,9 @@ void World::generateLakes()
 
     for (int i = 0; i < lakeCenters.size(); i++)
     {
-        int lakex = lakeCenters.at(i).x;
-        int lakey = lakeCenters.at(i).y;
+        int radius = randint(minLakeRadius, maxLakeRadius, seed * i);
 
-        int seed = randint(0,65536);
-        int radius = randint(minLakeRadius, maxLakeRadius, seed);
-
-        for (int y = lakey - radius; y < lakey + radius; y++)
-        {
-            for (int x = lakex - radius; x < lakex + radius; x++)
-            {
-                int dx = std::fabs(x - lakeCenters.at(i).x);
-                int dy = std::fabs(y - lakeCenters.at(i).y);
-
-                float dist = std::sqrt(dx*dx + dy*dy);
-
-                if (dist < radius)
-                    setTile(x, y, LAKE_WATER);
-            }
-        }
+        generateCircle(lakeCenters.at(i), radius, LAKE_WATER);
     }
 }
 
@@ -198,21 +223,33 @@ void World::generateRivers()
             }
             else
             {
-                if (getTile(x, y) != SEA_WATER && getTile(x, y) != BEACH)
+                if (getTile(x, y) != SEA_WATER && getTile(x, y) != BEACH && getTile(x, y) != ROCK)
                     setTile(x, y, GRASS);
             }
         }
     }
 }
 
-void World::generateRock()
+void World::generateTrees()
 {
 
 }
 
-void World::generateTrees()
+void World::generateCircle(Vector2f position, int radius, TileName tile)
 {
+    for (int y = position.y - radius; y < position.y + radius; y++)
+    {
+        for (int x = position.x - radius; x < position.x + radius; x++)
+        {
+            int dx = std::fabs(x - position.x);
+            int dy = std::fabs(y - position.y);
 
+            float dist = std::sqrt(dx*dx + dy*dy);
+
+            if (dist < radius)
+                setTile(x, y, tile);
+        }
+    }
 }
 
 void World::generationCleanup()

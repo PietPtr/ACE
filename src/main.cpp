@@ -35,7 +35,7 @@ int randint(int low, int high, int seed)
 int randint(int low, int high)
 {
     int value = rand() % (high + 1 - low) + low;
-    //srand(totalTime.asMicroseconds() * value * rand());
+    //srand(value * rand());
 
     return value;
 }
