@@ -11,7 +11,7 @@ const int WORLDSIZE = 512;
 class World
 {
     public:
-        World(int seed, std::vector<Tile>* tileDataptr);
+        World(int seed, std::vector<Tile>* tileDataptr, std::vector<Texture*>* txtptr);
 
         void printWorld();
         Image getWorldMap();
@@ -31,12 +31,15 @@ class World
         void generationCleanup();
         //Auxiliary generation methods
         void generateCircle(Vector2f position, int radius, TileName tile);
+
+        void draw();
     protected:
     private:
         int seed;
         int tiles[WORLDSIZE * WORLDSIZE];
 
         std::vector<Tile>* tileDataptr;
+        std::vector<Texture*>* txtptr;
 };
 
 #endif // WORLD_H

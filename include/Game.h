@@ -37,7 +37,6 @@ class Game
         View view;
 
         std::vector<std::string> audioFileNames { "first.wav", "second.wav" };
-        std::vector<std::string> textureNames { "character.png" };
 
         std::vector<Tile> tileData;
         std::vector<Audio*> sfx;
@@ -45,5 +44,5 @@ class Game
 
         Vector2f viewPos;
 
-        World world { randint(0, 65536), &tileData };
+        World world { randint(0, 65536), &tileData, &txt };
 };

@@ -11,10 +11,11 @@ int randint(int low, int high);
 
 const double PI = 3.141592654;
 
-World::World(int _seed, std::vector<Tile>* _tileDataptr)
+World::World(int _seed, std::vector<Tile>* _tileDataptr, std::vector<Texture*>* _txtptr)
 {
     seed = _seed;
     tileDataptr = _tileDataptr;
+    txtptr = _txtptr;
 }
 
 void World::setTile(int x, int y, TileName tile)
@@ -44,15 +45,48 @@ TileName World::getTile(int x, int y)
 void World::generateWorld()
 {
     generateGrass();
+    generateTrees();
     generateRock();
     generateSea();
     generateLakes();
     generateRivers();
-    generateTrees();
     generationCleanup();
+}
 
+void World::generateTrees()
+{
+    /*for (int y = 0; y < WORLDSIZE; y++)
+    {
+        for (int x = 0; x < WORLDSIZE; x++)
+        {
+            if (randint(0, 100) <= 1)
+            {
+                setTile(x, y, TREE);
+            }
+        }
+    }*/
+    std::cout << "Generating trees.\n";
+    float numberOfForests = 50;
+    float maxTreeDistance = 16;
 
-    setTile(1024, 1024, ROCK);
+    for (int f = 0; f < numberOfForests; f++)
+    {
+        int x = randint(0, WORLDSIZE, f * f * seed);
+        int y = randint(0, WORLDSIZE, (f+1) * seed);
+
+        setTile(x, y, TREE);
+
+        int forestSize = maxTreeDistance + randint(-4, 4, seed+f);
+
+        for (int t = 0; t < forestSize * 2; t++)
+        {
+            int X = x + randint(-forestSize, forestSize, seed / (t+f+1024) - t);
+            int Y = y + randint(-forestSize, forestSize, seed * (t+f) + f);
+
+            setTile(X, Y, TREE);
+        }
+    }
+
 }
 
 void World::generateGrass()
@@ -73,7 +107,6 @@ void World::generateRock()
     std::cout <<  "Generating rock.\n";
     std::vector<Vector2f> rockCenters;
     int numberOfRock = 15;
-    int rockSpawnChance = 60;
     float maxRockRadius = 8;
     float minRockRadius = 4;
     float secRocksDist = 3;
@@ -223,16 +256,11 @@ void World::generateRivers()
             }
             else
             {
-                if (getTile(x, y) != SEA_WATER && getTile(x, y) != BEACH && getTile(x, y) != ROCK)
+                if (getTile(x, y) == LAKE_WATER)
                     setTile(x, y, GRASS);
             }
         }
     }
-}
-
-void World::generateTrees()
-{
-
 }
 
 void World::generateCircle(Vector2f position, int radius, TileName tile)

@@ -62,7 +62,7 @@ void Game::update()
     dt = clock.restart();
     totalTime += dt;
 
-    if (showFPS)
+    if (showFPS && frame % 30 == 0)
     {
         std::cout << 1 / dt.asSeconds() << "\n";
     }
@@ -96,7 +96,7 @@ void Game::draw()
     window->setView(view);
 
     /*Sprite test;
-    test.setTexture(*txt.at(0));
+    test.setTexture(*txt.at(GRASS));
     //window->draw(test);
 
     for (int y = 0; y < 16; y++)
@@ -118,10 +118,10 @@ void Game::draw()
         {
             if (randint(0, 5, x * y) == 0)
                 test2.setPosition(Vector2f(x * 64, y * 64));
-            //celShade(test2, window, Color(0, 0, 0));
+            celShade(test2, window, Color(0, 0, 0));
             window->draw(test2);
         }
-    }*/
+    }
 
     /*Sprite pix;
     pix.setTexture(*txt.at(0));
@@ -141,12 +141,15 @@ void Game::draw()
         pix.setPosition(Vector2f(x, Y));
         window->draw(pix);
     }*/
-    Texture mapTexture;
-    mapTexture.loadFromImage(world.getWorldMap());
-    Sprite worldmap;
-    worldmap.setPosition(Vector2f(-256, -256));
-    worldmap.setTexture(mapTexture);
-    window->draw(worldmap);
+    if (Keyboard::isKeyPressed(Keyboard::M))
+    {
+        Texture mapTexture;
+        mapTexture.loadFromImage(world.getWorldMap());
+        Sprite worldmap;
+        worldmap.setPosition(Vector2f(-256, -256));
+        worldmap.setTexture(mapTexture);
+        window->draw(worldmap);
+    }
 
     window->display();
 }
@@ -195,6 +198,9 @@ void Game::loadTextures()
     {
         window->close();
     }
+
+    std::sort(textureNames.begin(), textureNames.end());
+
     for (int i = 0; i < textureNames.size(); i++)
     {
         txt.push_back(new Texture());
