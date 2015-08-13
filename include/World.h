@@ -7,6 +7,7 @@
 using namespace sf;
 
 const int WORLDSIZE = 512;
+const int TILESIZE  = 32;
 
 class World
 {

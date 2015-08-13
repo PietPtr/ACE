@@ -305,6 +305,17 @@ void World::generationCleanup()
                     if (surroundingNonLakeTiles > 2)
                         setTile(x, y, GRASS);
                 }
+                if (getTile(x, y) == TREE)
+                {
+                    if (getTile(x + 1, y) == TREE)
+                        setTile(x + 1, y, GRASS);
+                    if (getTile(x - 1, y) == TREE)
+                        setTile(x - 1, y, GRASS);
+                    if (getTile(x, y + 1) == TREE)
+                        setTile(x, y + 1, GRASS);
+                    if (getTile(x, y - 1) == TREE)
+                        setTile(x, y - 1, GRASS);
+                }
             }
         }
     }
@@ -312,8 +323,8 @@ void World::generationCleanup()
 
 void World::draw(Vector2f position, Vector2f viewDistance)
 {
-    int X = ((position.x - ((int)position.x % 64)) / 64) - (viewDistance.x);
-    int Y = ((position.y - ((int)position.y % 64)) / 64) - (viewDistance.y);
+    int X = ((position.x - ((int)position.x % TILESIZE)) / TILESIZE) - (viewDistance.x);
+    int Y = ((position.y - ((int)position.y % TILESIZE)) / TILESIZE) - (viewDistance.y);
 
     for (int y = Y; y <  Y + viewDistance.y * 2; y++)
     {
@@ -324,7 +335,7 @@ void World::draw(Vector2f position, Vector2f viewDistance)
             Sprite tileSprite;
 
             tileSprite.setTexture(txtptr->at(tileDataptr->at(tile).getTextureIndex()));
-            tileSprite.setPosition(x * 64 + tileDataptr->at(tile).getOffset().x, y * 64 + tileDataptr->at(tile).getOffset().y);
+            tileSprite.setPosition(x * TILESIZE + tileDataptr->at(tile).getOffset().x, y * TILESIZE + tileDataptr->at(tile).getOffset().y);
             window->draw(tileSprite);
         }
     }

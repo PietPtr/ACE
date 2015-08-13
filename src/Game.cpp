@@ -68,15 +68,15 @@ void Game::update()
         std::cout << 1 / dt.asSeconds() << "\n";
     }
 
-    float SPEED = 35;
+    float SPEED = 512;
     if (Keyboard::isKeyPressed(Keyboard::W))
-        viewPos.y -= SPEED;
+        viewPos.y -= SPEED * dt.asSeconds();
     if (Keyboard::isKeyPressed(Keyboard::A))
-        viewPos.x -= SPEED;
+        viewPos.x -= SPEED * dt.asSeconds();
     if (Keyboard::isKeyPressed(Keyboard::S))
-        viewPos.y += SPEED;
+        viewPos.y += SPEED * dt.asSeconds();
     if (Keyboard::isKeyPressed(Keyboard::D))
-        viewPos.x += SPEED;
+        viewPos.x += SPEED * dt.asSeconds();
 
     frame++;
 }
@@ -93,8 +93,8 @@ void Game::draw()
 
 
     Vector2f viewDistance;
-    viewDistance.x = (windowWidth / 64 / 2);
-    viewDistance.y = (windowHeight / 64 / 2);
+    viewDistance.x = (windowWidth / TILESIZE / 2);
+    viewDistance.y = (windowHeight / TILESIZE / 2);
 
     if (Keyboard::isKeyPressed(Keyboard::Period))
     {
