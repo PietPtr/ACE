@@ -68,7 +68,7 @@ void Game::update()
         std::cout << 1 / dt.asSeconds() << "\n";
     }
 
-    float SPEED = 15;
+    float SPEED = 35;
     if (Keyboard::isKeyPressed(Keyboard::W))
         viewPos.y -= SPEED;
     if (Keyboard::isKeyPressed(Keyboard::A))

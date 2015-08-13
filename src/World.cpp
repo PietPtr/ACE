@@ -38,7 +38,7 @@ void World::setTile(int x, int y, TileName tile)
 
 TileName World::getTile(int x, int y)
 {
-    if (x < 0 || x > WORLDSIZE || y < 0 || y > WORLDSIZE)
+    if (x < 0 || x >= WORLDSIZE || y < 0 || y >= WORLDSIZE)
     {
         return EDGE;
     }
