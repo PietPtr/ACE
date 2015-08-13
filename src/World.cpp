@@ -11,11 +11,12 @@ int randint(int low, int high);
 
 const double PI = 3.141592654;
 
-World::World(int _seed, std::vector<Tile>* _tileDataptr, std::vector<Texture*>* _txtptr)
+World::World(int _seed, std::vector<Tile>* _tileDataptr, std::vector<Texture*>* _txtptr, RenderWindow* _window)
 {
     seed = _seed;
     tileDataptr = _tileDataptr;
     txtptr = _txtptr;
+    window = _window;
 }
 
 void World::setTile(int x, int y, TileName tile)
@@ -44,6 +45,7 @@ TileName World::getTile(int x, int y)
 
 void World::generateWorld()
 {
+    std::cout << "Generating world with seed " << seed << ".\n";
     generateGrass();
     generateTrees();
     generateRock();
@@ -65,7 +67,6 @@ void World::generateTrees()
             }
         }
     }*/
-    std::cout << "Generating trees.\n";
     float numberOfForests = 50;
     float maxTreeDistance = 16;
 
@@ -92,7 +93,6 @@ void World::generateTrees()
 void World::generateGrass()
 {
     //Set every tile to grass
-    std::cout << "Generating grass.\n";
     for (int y = 0; y < WORLDSIZE; y++)
     {
         for (int x = 0; x < WORLDSIZE; x++)
@@ -104,7 +104,6 @@ void World::generateGrass()
 
 void World::generateRock()
 {
-    std::cout <<  "Generating rock.\n";
     std::vector<Vector2f> rockCenters;
     int numberOfRock = 15;
     float maxRockRadius = 8;
@@ -140,7 +139,6 @@ void World::generateRock()
 void World::generateSea()
 {
     //Generate the sea
-    std::cout << "Generating sea and beaches.\n";
 
     //generation modifiers
     float seaBaseAmp = 3 + randint(-100, 100, seed) / 100.0;                        //Higher -> higher waves
@@ -181,7 +179,6 @@ void World::generateSea()
 void World::generateLakes()
 {
     //Generate lakes
-    std::cout <<  "Generating lakes.\n";
     std::vector<Vector2f> lakeCenters;
     int numberOfLakes = 5;
     int lakeSpawnChance = 60;
@@ -227,7 +224,6 @@ void World::generateLakes()
 
 void World::generateRivers()
 {
-    std::cout << "Generating river.\n";
 
     float riverx = WORLDSIZE / 2.0 + randint(-WORLDSIZE / 8, WORLDSIZE / 8, seed);  //x position of the river
     float riverFreq = 12.0 + randint(-400, 1400, seed) / 100.0;                           //base frequency of the sinus wave
@@ -307,6 +303,32 @@ void World::generationCleanup()
             }
         }
     }
+}
+
+void World::draw(Vector2f position, Vector2f viewDistance)
+{
+    int X = ((position.x - ((int)position.x % 64)) / 64) - (viewDistance.x);
+    int Y = ((position.y - ((int)position.y % 64)) / 64) - (viewDistance.y);
+
+    for (int y = Y; y <  Y + viewDistance.y * 2; y++)
+    {
+        for(int x = X; x < X + viewDistance.x * 2; x++)
+        {
+            TileName tile = getTile(x, y);
+
+            Sprite tileSprite;
+
+            tileSprite.setTexture(*(txtptr->at(0)));//*txtptr->at(tileDataptr->at(tile).getTextureIndex()));
+            tileSprite.setPosition(x * 64 + tileDataptr->at(tile).getOffset().x, y * 64 + tileDataptr->at(tile).getOffset().y);
+            std::cout << tileDataptr->at(tile).getTextureIndex();
+            //std::cout << tileSprite.getPosition().x << " " << tileSprite.getPosition().y << "\n";
+            window->draw(tileSprite);
+        }
+
+        std::cout << "\n";
+    }
+
+    std::cout << "\n";
 }
 
 void World::printWorld()

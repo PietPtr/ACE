@@ -2,14 +2,14 @@
 #define ENUMS_H_INCLUDED
 
 enum TileName {
-    GRASS,
-    TREE,
-    SEA_WATER,
-    LAKE_WATER,
-    RIVER_WATER,
-    BEACH,
-    EDGE,
-    ROCK
+    GRASS,          //0
+    TREE,           //1
+    SEA_WATER,      //2
+    LAKE_WATER,     //3
+    RIVER_WATER,    //4
+    BEACH,          //5
+    EDGE,           //6
+    ROCK            //7
 };
 
 #endif // ENUMS_H_INCLUDED

@@ -11,6 +11,11 @@ class Tile
         Tile(std::string name, int textureIndex, Vector2f offset, Vector2f tileSize, Vector2f unwalkableOffset, Vector2f unwalkableSize, Color color);
         std::string getName() { return name; }
         Color getColor() { return color; }
+        int getTextureIndex() { return textureIndex; }
+        Vector2f getOffset() { return offset; }
+        Vector2f getTileSize() { return tileSize; }
+        Vector2f getUnwalkableOffset() { return unwalkableOffset; }
+        Vector2f getUnwalkableSize() { return unwalkableSize; }
     protected:
     private:
         std::string name;

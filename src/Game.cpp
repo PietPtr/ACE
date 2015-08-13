@@ -95,58 +95,14 @@ void Game::draw()
 
     window->setView(view);
 
-    /*Sprite test;
-    test.setTexture(*txt.at(GRASS));
-    //window->draw(test);
+    world.draw(viewPos, Vector2f(6, 6));
 
-    for (int y = 0; y < 16; y++)
-    {
-        for (int x = 0; x < 24; x++)
-        {
-            test.setPosition(Vector2f(x * 64, y * 64));
-            window->draw(test);
-        }
-    }
-
-    Sprite test2;
-    test2.setTexture(*txt.at(1));
-    //window->draw(test);
-
-    for (int y = 0; y < 16; y++)
-    {
-        for (int x = 0; x < 24; x++)
-        {
-            if (randint(0, 5, x * y) == 0)
-                test2.setPosition(Vector2f(x * 64, y * 64));
-            celShade(test2, window, Color(0, 0, 0));
-            window->draw(test2);
-        }
-    }
-
-    /*Sprite pix;
-    pix.setTexture(*txt.at(0));
-    int zoom = 64;
-    int worldSeed = 4872634;
-    pix.setScale(1.0/zoom, 1.0/zoom);
-    //window->draw(pix);
-    int bound = 1024;
-    for(int x = -bound; x < bound; x++)
-    {
-        int X = -x;
-        //std::cout << X << "\n";
-        //int Y = -(1.0/128)*X*X;
-        int Y = std::sin(X / 14.0) * 3 * (randint(100, 300, x / (87.96) + worldSeed) / 100.0);
-        //std::cout << (randint(100, 200, x / 63) / 100.0) << "\n";
-        Y = Y + (1.0/1024)*X*X;
-        pix.setPosition(Vector2f(x, Y));
-        window->draw(pix);
-    }*/
     if (Keyboard::isKeyPressed(Keyboard::M))
     {
         Texture mapTexture;
         mapTexture.loadFromImage(world.getWorldMap());
         Sprite worldmap;
-        worldmap.setPosition(Vector2f(-256, -256));
+        worldmap.setPosition(viewPos + Vector2f(-256, -256));
         worldmap.setTexture(mapTexture);
         window->draw(worldmap);
     }

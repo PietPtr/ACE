@@ -42,7 +42,7 @@ class Game
         std::vector<Audio*> sfx;
         std::vector<Texture*> txt;
 
-        Vector2f viewPos;
+        Vector2f viewPos { 0, 0 };
 
-        World world { randint(0, 65536), &tileData, &txt };
+        World world { randint(0, 65536), &tileData, &txt, window };
 };
