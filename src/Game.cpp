@@ -22,6 +22,7 @@ void Game::initialize()
     loadAudio(audioFileNames);
     loadTextures();
     loadTileData();
+    world.initialize(randint(0, 65536), &tileData, &txt, window);
     world.generateWorld(); //loadworld
 }
 
@@ -67,7 +68,7 @@ void Game::update()
         std::cout << 1 / dt.asSeconds() << "\n";
     }
 
-    float SPEED = 3;
+    float SPEED = 15;
     if (Keyboard::isKeyPressed(Keyboard::W))
         viewPos.y -= SPEED;
     if (Keyboard::isKeyPressed(Keyboard::A))
@@ -87,22 +88,34 @@ void Game::draw()
     //view = new View(FloatRect(0, 0, windowWidth, windowHeight))
     view.setSize(Vector2f(windowWidth, windowHeight));;
     view.setCenter(viewPos);
-    //view.zoom(0.5);
+    view.zoom(0.5);
+
+
+
+    Vector2f viewDistance;
+    viewDistance.x = (windowWidth / 64 / 2);
+    viewDistance.y = (windowHeight / 64 / 2);
+
     if (Keyboard::isKeyPressed(Keyboard::Period))
     {
-        view.zoom(1/64.0);
+        int zoom = 16;
+        view.zoom(zoom);
+        viewDistance.x *= zoom;
+        viewDistance.y *= zoom;
     }
+
 
     window->setView(view);
 
-    world.draw(viewPos, Vector2f(6, 6));
+    world.draw(viewPos, viewDistance);
 
     if (Keyboard::isKeyPressed(Keyboard::M))
     {
         Texture mapTexture;
         mapTexture.loadFromImage(world.getWorldMap());
         Sprite worldmap;
-        worldmap.setPosition(viewPos + Vector2f(-256, -256));
+        worldmap.setPosition(viewPos + Vector2f(-128, -128));
+        worldmap.scale(0.5, 0.5);
         worldmap.setTexture(mapTexture);
         window->draw(worldmap);
     }
@@ -159,9 +172,11 @@ void Game::loadTextures()
 
     for (int i = 0; i < textureNames.size(); i++)
     {
-        txt.push_back(new Texture());
-        if (!txt.back()->loadFromFile("textures/" + textureNames[i]))
+        Texture loadedTexture;
+        if (!loadedTexture.loadFromFile("textures/" + textureNames[i]))
             window->close();
+
+        txt.push_back(loadedTexture);
     }
 }
 

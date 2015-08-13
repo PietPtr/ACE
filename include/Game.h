@@ -40,9 +40,9 @@ class Game
 
         std::vector<Tile> tileData;
         std::vector<Audio*> sfx;
-        std::vector<Texture*> txt;
+        std::vector<Texture> txt;
 
-        Vector2f viewPos { 0, 0 };
+        Vector2f viewPos { 4000, 4000 };
 
-        World world { randint(0, 65536), &tileData, &txt, window };
+        World world;
 };

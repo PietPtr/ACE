@@ -11,7 +11,8 @@ const int WORLDSIZE = 512;
 class World
 {
     public:
-        World(int seed, std::vector<Tile>* tileDataptr, std::vector<Texture*>* txtptr, RenderWindow* window);
+        World();
+        void initialize(int seed, std::vector<Tile>* tileDataptr, std::vector<Texture>* txtptr, RenderWindow* window);
 
         void printWorld();
         Image getWorldMap();
@@ -39,7 +40,7 @@ class World
         int tiles[WORLDSIZE * WORLDSIZE];
 
         std::vector<Tile>* tileDataptr;
-        std::vector<Texture*>* txtptr;
+        std::vector<Texture>* txtptr;
         RenderWindow* window;
 };
 

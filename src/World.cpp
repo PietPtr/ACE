@@ -11,7 +11,12 @@ int randint(int low, int high);
 
 const double PI = 3.141592654;
 
-World::World(int _seed, std::vector<Tile>* _tileDataptr, std::vector<Texture*>* _txtptr, RenderWindow* _window)
+World::World()
+ {
+
+ }
+
+void World::initialize(int _seed, std::vector<Tile>* _tileDataptr, std::vector<Texture>* _txtptr, RenderWindow* _window)
 {
     seed = _seed;
     tileDataptr = _tileDataptr;
@@ -318,17 +323,11 @@ void World::draw(Vector2f position, Vector2f viewDistance)
 
             Sprite tileSprite;
 
-            tileSprite.setTexture(*(txtptr->at(0)));//*txtptr->at(tileDataptr->at(tile).getTextureIndex()));
+            tileSprite.setTexture(txtptr->at(tileDataptr->at(tile).getTextureIndex()));
             tileSprite.setPosition(x * 64 + tileDataptr->at(tile).getOffset().x, y * 64 + tileDataptr->at(tile).getOffset().y);
-            std::cout << tileDataptr->at(tile).getTextureIndex();
-            //std::cout << tileSprite.getPosition().x << " " << tileSprite.getPosition().y << "\n";
             window->draw(tileSprite);
         }
-
-        std::cout << "\n";
     }
-
-    std::cout << "\n";
 }
 
 void World::printWorld()
