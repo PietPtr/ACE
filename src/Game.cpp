@@ -68,7 +68,7 @@ void Game::update()
         std::cout << 1 / dt.asSeconds() << "\n";
     }
 
-    float SPEED = 512;
+    float SPEED = 1024;
     if (Keyboard::isKeyPressed(Keyboard::W))
         playerPos.y -= SPEED * dt.asSeconds();
     if (Keyboard::isKeyPressed(Keyboard::A))
