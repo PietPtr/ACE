@@ -68,15 +68,17 @@ void Game::update()
         std::cout << 1 / dt.asSeconds() << "\n";
     }
 
-    float SPEED = 512;
+    float SPEED = 4096;
     if (Keyboard::isKeyPressed(Keyboard::W))
-        viewPos.y -= SPEED * dt.asSeconds();
+        playerPos.y -= SPEED * dt.asSeconds();
     if (Keyboard::isKeyPressed(Keyboard::A))
-        viewPos.x -= SPEED * dt.asSeconds();
+        playerPos.x -= SPEED * dt.asSeconds();
     if (Keyboard::isKeyPressed(Keyboard::S))
-        viewPos.y += SPEED * dt.asSeconds();
+        playerPos.y += SPEED * dt.asSeconds();
     if (Keyboard::isKeyPressed(Keyboard::D))
-        viewPos.x += SPEED * dt.asSeconds();
+        playerPos.x += SPEED * dt.asSeconds();
+
+    std::cout << playerPos.x << " " << playerPos.y << "\n";
 
     frame++;
 }
@@ -107,15 +109,14 @@ void Game::draw()
 
     window->setView(view);
 
-    world.draw(viewPos, viewDistance);
+    world.draw(playerPos, viewDistance);
 
     if (Keyboard::isKeyPressed(Keyboard::M))
     {
         Texture mapTexture;
-        mapTexture.loadFromImage(world.getWorldMap(viewPos));
+        mapTexture.loadFromImage(world.getWorldMap((Vector2f)playerPos));
         Sprite worldmap;
-        worldmap.setPosition(viewPos + Vector2f(-256, -256));
-        //worldmap.scale(0.5, 0.5);
+        worldmap.setPosition(Vector2f(-WORLDSIZE / 2, -WORLDSIZE / 2));
         worldmap.setTexture(mapTexture);
         window->draw(worldmap);
     }

@@ -42,7 +42,8 @@ class Game
         std::vector<Audio*> sfx;
         std::vector<Texture> txt;
 
-        Vector2f viewPos { 4000, 4000 };
+        Vector2f viewPos { 0, 0 };
+        Vector2<double> playerPos { 0, 0 };
 
         World world;
 };

@@ -323,7 +323,7 @@ void World::generationCleanup()
     }
 }
 
-void World::draw(Vector2f position, Vector2f viewDistance)
+void World::draw(Vector2<double> position, Vector2f viewDistance)
 {
     int X = ((position.x - ((int)position.x % TILESIZE)) / TILESIZE) - (viewDistance.x);
     int Y = ((position.y - ((int)position.y % TILESIZE)) / TILESIZE) - (viewDistance.y);
@@ -336,8 +336,12 @@ void World::draw(Vector2f position, Vector2f viewDistance)
 
             Sprite tileSprite;
 
+            Vector2f tileDrawPos;
+            tileDrawPos.x = (x * TILESIZE) - position.x + tileDataptr->at(tile).getOffset().x;
+            tileDrawPos.y = (y * TILESIZE) - position.y + tileDataptr->at(tile).getOffset().y;
+
             tileSprite.setTexture(txtptr->at(tileDataptr->at(tile).getTextureIndex()));
-            tileSprite.setPosition(x * TILESIZE + tileDataptr->at(tile).getOffset().x, y * TILESIZE + tileDataptr->at(tile).getOffset().y);
+            tileSprite.setPosition(tileDrawPos);
             window->draw(tileSprite);
         }
     }
@@ -387,11 +391,14 @@ Image World::getWorldMap(Vector2f playerPosition)
     }
     int markerX = (int)(playerPosition.x / TILESIZE);
     int markerY = (int)(playerPosition.y / TILESIZE);
-    worldMap.setPixel(markerX, markerY, Color(255, 0, 0));
-    worldMap.setPixel(markerX + 1, markerY, Color(255, 0, 0));
-    worldMap.setPixel(markerX - 1, markerY, Color(255, 0, 0));
-    worldMap.setPixel(markerX, markerY + 1, Color(255, 0, 0));
-    worldMap.setPixel(markerX, markerY - 1, Color(255, 0, 0));
+    if (markerX > 0 && markerX < WORLDSIZE && markerY > 0 && markerY < WORLDSIZE)
+    {
+        worldMap.setPixel(markerX, markerY, Color(255, 0, 0));
+        worldMap.setPixel(markerX + 1, markerY, Color(255, 0, 0));
+        worldMap.setPixel(markerX - 1, markerY, Color(255, 0, 0));
+        worldMap.setPixel(markerX, markerY + 1, Color(255, 0, 0));
+        worldMap.setPixel(markerX, markerY - 1, Color(255, 0, 0));
+    }
 
     return worldMap;
 }

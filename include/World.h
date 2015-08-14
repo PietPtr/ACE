@@ -34,14 +34,14 @@ class World
         //Auxiliary generation methods
         void generateCircle(Vector2f position, int radius, TileName tile);
 
-        void draw(Vector2f position, Vector2f viewDistance);
+        void draw(Vector2<double> position, Vector2f viewDistance);
     protected:
     private:
-        int seed;
+        int seed = 0;
         int tiles[WORLDSIZE * WORLDSIZE];
 
-        std::vector<Tile>* tileDataptr;
-        std::vector<Texture>* txtptr;
+        std::vector<Tile>* tileDataptr = nullptr;
+        std::vector<Texture>* txtptr = nullptr;
         RenderWindow* window;
 };
 
