@@ -29,7 +29,7 @@ class Game
         Time totalTime;
         Clock clock;
         int frame = 0;
-        bool showFPS = false;
+        bool showFPS = true;
 
         int windowWidth = 1280;
         int windowHeight = 720;
@@ -43,7 +43,7 @@ class Game
         std::vector<Texture> txt;
 
         Vector2f viewPos { 0, 0 };
-        Vector2<double> playerPos { 0, 0 };
+        Vector2<double> playerPos { 256, 14400 };
 
         World world;
 };

@@ -8,6 +8,7 @@ using namespace sf;
 
 int randint(int low, int high, int seed);
 int randint(int low, int high);
+void celShade(Sprite sprite, RenderWindow* window, Color shadeColor);
 
 const double PI = 3.141592654;
 
@@ -145,18 +146,18 @@ void World::generateRock()
 
 void World::generateSea()
 {
-    //Generate the sea
+    //Generate the sea and beaches
 
     //generation modifiers
     float seaBaseAmp = 3 + randint(-100, 100, seed) / 100.0;                        //Higher -> higher waves
-    float seaMaxAmp = 300 + randint(-100, 100, seed);                               //Higher -> higher waves after randomization
-    float seaBaseFreq = 10.0 + randint(-500, 500, seed) / 100.0;                    //Higher -> less waves
+    float seaMaxAmp = 250 + randint(-100, 100, seed);                               //Higher -> higher waves after randomization
+    float seaBaseFreq = 10.0 + randint(-500, 250, seed) / 100.0;                    //Higher -> less waves
     float seaArchMod = 1000 + randint(0, 500, seed);                                //Higher -> wider sea
     float seaHeight = 72 + randint(0, 32, seed);                                    //Higher -> coastline more north
 
     float beachBaseFreq = 10.0 + randint(0, 1000, seed) / 100.0;
-    float beachBaseAmp = 4 + randint(-100, 300, seed) / 100.0;
-    float minBeachHeight = 3 + randint(-1, 1, seed);
+    float beachBaseAmp = 8 + randint(-100, 300, seed) / 100.0;
+    float minBeachHeight = 7 + randint(-2, 2, seed);
     float beachOffset = 128 + randint(-128, 128);
 
     //std::cout << "baseAmp:" << baseAmp << ", maxAmp:" << maxAmp << ", baseFreq:" << baseFreq << ", archMod:" << archMod << "\n";
@@ -285,28 +286,13 @@ void World::generateCircle(Vector2f position, int radius, TileName tile)
 
 void World::generationCleanup()
 {
-    //remove some rough edges from lakes
+    //remove some rough edges
     for (int i = 0; i < 3; i++)
     {
         for (int y = 0; y < WORLDSIZE; y++)
         {
             for (int x = 0; x < WORLDSIZE; x++)
             {
-                if (getTile(x, y) == LAKE_WATER)
-                {
-                    int surroundingNonLakeTiles = 0;
-                    if (getTile(x + 1, y) != LAKE_WATER)
-                        surroundingNonLakeTiles++;
-                    if (getTile(x - 1, y) != LAKE_WATER)
-                        surroundingNonLakeTiles++;
-                    if (getTile(x, y + 1) != LAKE_WATER)
-                        surroundingNonLakeTiles++;
-                    if (getTile(x, y - 1) != LAKE_WATER)
-                        surroundingNonLakeTiles++;
-
-                    if (surroundingNonLakeTiles > 2)
-                        setTile(x, y, GRASS);
-                }
                 if (getTile(x, y) == TREE)
                 {
                     if (getTile(x + 1, y) == TREE)
@@ -318,8 +304,33 @@ void World::generationCleanup()
                     if (getTile(x, y - 1) == TREE)
                         setTile(x, y - 1, GRASS);
                 }
+
+                smooth(x, y, BEACH, GRASS);
+                smooth(x, y, GRASS, BEACH);
+                smooth(x, y, BEACH, SEA_WATER);
+                smooth(x, y, SEA_WATER, BEACH);
+                smooth(x, y, LAKE_WATER, GRASS);
             }
         }
+    }
+}
+
+void World::smooth(int x, int y, TileName innerTile, TileName outerTile)
+{
+    int surroundCount = 0;
+    if (getTile(x, y) == innerTile)
+    {
+        if (getTile(x + 1, y) == outerTile)
+            surroundCount++;
+        if (getTile(x - 1, y) == outerTile)
+            surroundCount++;
+        if (getTile(x, y + 1) == outerTile)
+            surroundCount++;
+        if (getTile(x, y - 1) == outerTile)
+            surroundCount++;
+
+        if (surroundCount >= 3)
+            setTile(x, y, outerTile);
     }
 }
 
@@ -328,21 +339,32 @@ void World::draw(Vector2<double> position, Vector2f viewDistance)
     int X = ((position.x - ((int)position.x % TILESIZE)) / TILESIZE) - (viewDistance.x);
     int Y = ((position.y - ((int)position.y % TILESIZE)) / TILESIZE) - (viewDistance.y);
 
+    RectangleShape grassRect;
+    grassRect.setSize(Vector2f(viewDistance.x * 2 * TILESIZE, viewDistance.y * 2 * TILESIZE));
+    grassRect.setTexture(&txtptr->at(0));
+    grassRect.setTextureRect(IntRect((int)position.x % TILESIZE, (int)position.y % TILESIZE,
+                                     viewDistance.x * 2 * TILESIZE, viewDistance.y * 2 * TILESIZE));
+    grassRect.setPosition(Vector2f(-viewDistance.x * TILESIZE, -viewDistance.y * TILESIZE));
+    window->draw(grassRect);
+
     for (int y = Y; y <  Y + viewDistance.y * 2; y++)
     {
         for(int x = X; x < X + viewDistance.x * 2; x++)
         {
             TileName tile = getTile(x, y);
 
-            Sprite tileSprite;
+            if(tile != GRASS)
+            {
+                Sprite tileSprite;
 
-            Vector2f tileDrawPos;
-            tileDrawPos.x = (x * TILESIZE) - position.x + tileDataptr->at(tile).getOffset().x;
-            tileDrawPos.y = (y * TILESIZE) - position.y + tileDataptr->at(tile).getOffset().y;
+                Vector2f tileDrawPos;
+                tileDrawPos.x = (x * TILESIZE) - position.x + tileDataptr->at(tile).getOffset().x;
+                tileDrawPos.y = (y * TILESIZE) - position.y + tileDataptr->at(tile).getOffset().y;
 
-            tileSprite.setTexture(txtptr->at(tileDataptr->at(tile).getTextureIndex()));
-            tileSprite.setPosition(tileDrawPos);
-            window->draw(tileSprite);
+                tileSprite.setTexture(txtptr->at(tileDataptr->at(tile).getTextureIndex()));
+                tileSprite.setPosition(tileDrawPos);
+                window->draw(tileSprite);
+            }
         }
     }
 }

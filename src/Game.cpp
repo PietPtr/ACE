@@ -41,7 +41,7 @@ void Game::update()
             }
             if (event.key.code == Keyboard::P)
             {
-                sfx.at(1)->play();
+                //sfx.at(1)->play();
                 world.getWorldMap(viewPos).saveToFile("screenshots/map" + std::to_string(world.getSeed()) + ".png");
                 world.setSeed(randint(0, 65536));
                 world.generateWorld();
@@ -68,7 +68,7 @@ void Game::update()
         std::cout << 1 / dt.asSeconds() << "\n";
     }
 
-    float SPEED = 4096;
+    float SPEED = 512;
     if (Keyboard::isKeyPressed(Keyboard::W))
         playerPos.y -= SPEED * dt.asSeconds();
     if (Keyboard::isKeyPressed(Keyboard::A))
@@ -77,8 +77,6 @@ void Game::update()
         playerPos.y += SPEED * dt.asSeconds();
     if (Keyboard::isKeyPressed(Keyboard::D))
         playerPos.x += SPEED * dt.asSeconds();
-
-    std::cout << playerPos.x << " " << playerPos.y << "\n";
 
     frame++;
 }
@@ -100,7 +98,7 @@ void Game::draw()
 
     if (Keyboard::isKeyPressed(Keyboard::Period))
     {
-        int zoom = 16;
+        float zoom = 1/2.0;
         view.zoom(zoom);
         viewDistance.x *= zoom;
         viewDistance.y *= zoom;
@@ -178,6 +176,7 @@ void Game::loadTextures()
             window->close();
 
         txt.push_back(loadedTexture);
+        txt.at(txt.size() - 1).setRepeated(true);
     }
 }
 

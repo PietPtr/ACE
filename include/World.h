@@ -33,6 +33,7 @@ class World
         void generationCleanup();
         //Auxiliary generation methods
         void generateCircle(Vector2f position, int radius, TileName tile);
+        void smooth(int x, int y, TileName innerTile, TileName outerTile);
 
         void draw(Vector2<double> position, Vector2f viewDistance);
     protected:
