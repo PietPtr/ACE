@@ -42,7 +42,7 @@ void Game::update()
             if (event.key.code == Keyboard::P)
             {
                 sfx.at(1)->play();
-                world.getWorldMap().saveToFile("screenshots/map" + std::to_string(world.getSeed()) + ".png");
+                world.getWorldMap(viewPos).saveToFile("screenshots/map" + std::to_string(world.getSeed()) + ".png");
                 world.setSeed(randint(0, 65536));
                 world.generateWorld();
             }
@@ -88,13 +88,13 @@ void Game::draw()
     //view = new View(FloatRect(0, 0, windowWidth, windowHeight))
     view.setSize(Vector2f(windowWidth, windowHeight));;
     view.setCenter(viewPos);
-    view.zoom(0.5);
+    //view.zoom(0.5);
 
 
 
     Vector2f viewDistance;
-    viewDistance.x = (windowWidth / TILESIZE / 2);
-    viewDistance.y = (windowHeight / TILESIZE / 2);
+    viewDistance.x = (windowWidth / TILESIZE / 2) + 4;
+    viewDistance.y = (windowHeight / TILESIZE / 2) + 4;
 
     if (Keyboard::isKeyPressed(Keyboard::Period))
     {
@@ -112,10 +112,10 @@ void Game::draw()
     if (Keyboard::isKeyPressed(Keyboard::M))
     {
         Texture mapTexture;
-        mapTexture.loadFromImage(world.getWorldMap());
+        mapTexture.loadFromImage(world.getWorldMap(viewPos));
         Sprite worldmap;
-        worldmap.setPosition(viewPos + Vector2f(-128, -128));
-        worldmap.scale(0.5, 0.5);
+        worldmap.setPosition(viewPos + Vector2f(-256, -256));
+        //worldmap.scale(0.5, 0.5);
         worldmap.setTexture(mapTexture);
         window->draw(worldmap);
     }

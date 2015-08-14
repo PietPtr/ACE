@@ -62,18 +62,20 @@ void World::generateWorld()
 
 void World::generateTrees()
 {
-    /*for (int y = 0; y < WORLDSIZE; y++)
+    float numberOfForests = 64 + randint(-16, 16, seed);
+    float maxTreeDistance = 12 + randint(-2, 4, seed);
+    float loneTreeChance  = 8 + randint(-2, 2, seed);
+
+    for (int y = 0; y < WORLDSIZE; y++)
     {
         for (int x = 0; x < WORLDSIZE; x++)
         {
-            if (randint(0, 100) <= 1)
+            if (randint(0, 1000) <= loneTreeChance)
             {
                 setTile(x, y, TREE);
             }
         }
-    }*/
-    float numberOfForests = 50;
-    float maxTreeDistance = 16;
+    }
 
     for (int f = 0; f < numberOfForests; f++)
     {
@@ -369,7 +371,7 @@ void World::printWorld()
 
 }
 
-Image World::getWorldMap()
+Image World::getWorldMap(Vector2f playerPosition)
 {
     Image worldMap;
     worldMap.create(WORLDSIZE, WORLDSIZE, Color(0, 255, 0));
@@ -383,6 +385,13 @@ Image World::getWorldMap()
             worldMap.setPixel(x, y, pixelColor);
         }
     }
+    int markerX = (int)(playerPosition.x / TILESIZE);
+    int markerY = (int)(playerPosition.y / TILESIZE);
+    worldMap.setPixel(markerX, markerY, Color(255, 0, 0));
+    worldMap.setPixel(markerX + 1, markerY, Color(255, 0, 0));
+    worldMap.setPixel(markerX - 1, markerY, Color(255, 0, 0));
+    worldMap.setPixel(markerX, markerY + 1, Color(255, 0, 0));
+    worldMap.setPixel(markerX, markerY - 1, Color(255, 0, 0));
 
     return worldMap;
 }

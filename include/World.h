@@ -16,7 +16,7 @@ class World
         void initialize(int seed, std::vector<Tile>* tileDataptr, std::vector<Texture>* txtptr, RenderWindow* window);
 
         void printWorld();
-        Image getWorldMap();
+        Image getWorldMap(Vector2f playerPosition);
         TileName getTile(int x, int y);            // These set and get tiles by global
         void setTile(int x, int y, TileName tile); // coordinates (0, 0) to (511, 511)
         void setSeed(int _seed) { seed = _seed; }
