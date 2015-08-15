@@ -98,7 +98,7 @@ void Game::draw()
 
     if (Keyboard::isKeyPressed(Keyboard::Period))
     {
-        float zoom = 1/2.0;
+        float zoom = 16.0;
         view.zoom(zoom);
         viewDistance.x *= zoom;
         viewDistance.y *= zoom;
