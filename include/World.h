@@ -19,6 +19,7 @@ class World
         Image getWorldMap(Vector2f playerPosition);
         TileName getTile(int x, int y);            // These set and get tiles by global
         void setTile(int x, int y, TileName tile); // coordinates (0, 0) to (511, 511)
+        bool isGrassLike(int x, int y);            // returns true for certain tiles that look like grass (GRASS, TREE, etc)
         void setSeed(int _seed) { seed = _seed; }
         int getSeed() { return seed; }
 
@@ -35,11 +36,13 @@ class World
         void generateCircle(Vector2f position, int radius, TileName tile);
         void smooth(int x, int y, TileName innerTile, TileName outerTile);
 
-        void draw(Vector2<double> position, Vector2f viewDistance);
+        void draw(Vector2<double> position, Vector2f viewDistance, Time totalTime);
     protected:
     private:
         int seed = 0;
         int tiles[WORLDSIZE * WORLDSIZE];
+
+        Time previousDrawTime;
 
         std::vector<Tile>* tileDataptr = nullptr;
         std::vector<Texture>* txtptr = nullptr;

@@ -107,7 +107,7 @@ void Game::draw()
 
     window->setView(view);
 
-    world.draw(playerPos, viewDistance);
+    world.draw(playerPos, viewDistance, totalTime);
 
     if (Keyboard::isKeyPressed(Keyboard::M))
     {
@@ -237,24 +237,26 @@ void Game::loadTileData()
         file.close();
 
         std::string name = rawData.at(0);
-        int textureIndex =       std::stoi(rawData.at(1), nullptr);
-        int offsetX =            std::stoi(rawData.at(2), nullptr);
-        int offsetY =            std::stoi(rawData.at(3), nullptr);
-        int tileSizeX =          std::stoi(rawData.at(4), nullptr);
-        int tileSizeY =          std::stoi(rawData.at(5), nullptr);
-        int unwalkableOffsetX =  std::stoi(rawData.at(6), nullptr);
-        int unwalkableOffsetY =  std::stoi(rawData.at(7), nullptr);
-        int unwalkableSizeX =    std::stoi(rawData.at(8), nullptr);
-        int unwalkableSizeY =    std::stoi(rawData.at(9), nullptr);
+        int textureIndex =       std::stoi(rawData.at(1),  nullptr);
+        int offsetX =            std::stoi(rawData.at(2),  nullptr);
+        int offsetY =            std::stoi(rawData.at(3),  nullptr);
+        int tileSizeX =          std::stoi(rawData.at(4),  nullptr);
+        int tileSizeY =          std::stoi(rawData.at(5),  nullptr);
+        int unwalkableOffsetX =  std::stoi(rawData.at(6),  nullptr);
+        int unwalkableOffsetY =  std::stoi(rawData.at(7),  nullptr);
+        int unwalkableSizeX =    std::stoi(rawData.at(8),  nullptr);
+        int unwalkableSizeY =    std::stoi(rawData.at(9),  nullptr);
         int r =                  std::stoi(rawData.at(10), nullptr);
         int g =                  std::stoi(rawData.at(11), nullptr);
         int b =                  std::stoi(rawData.at(12), nullptr);
+        int numberOfFrames =     std::stoi(rawData.at(13), nullptr);
+        int frameTime =          std::stoi(rawData.at(14), nullptr);
 
         tileData.push_back(Tile(name, textureIndex, Vector2f(offsetX, offsetY),
                                 Vector2f(tileSizeX, tileSizeY),
                                 Vector2f(unwalkableOffsetX, unwalkableOffsetY),
                                 Vector2f(unwalkableSizeX, unwalkableSizeY),
-                                Color(r, g, b)));
+                                Color(r, g, b), numberOfFrames, frameTime));
     }
 }
 

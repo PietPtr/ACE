@@ -43,7 +43,7 @@ class Game
         std::vector<Texture> txt;
 
         Vector2f viewPos { 0, 0 };
-        Vector2<double> playerPos { 256, 14400 };
+        Vector2<double> playerPos { 8192, 8192 };
 
         World world;
 };

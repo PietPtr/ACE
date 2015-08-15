@@ -49,6 +49,12 @@ TileName World::getTile(int x, int y)
     }
 }
 
+bool World::isGrassLike(int x, int y)
+{
+    TileName tile = getTile(x, y);
+    return tile == GRASS || tile == TREE;
+}
+
 void World::generateWorld()
 {
     std::cout << "Generating world with seed " << seed << ".\n";
@@ -309,6 +315,8 @@ void World::generationCleanup()
                 smooth(x, y, GRASS, BEACH);
                 smooth(x, y, BEACH, SEA_WATER);
                 smooth(x, y, SEA_WATER, BEACH);
+                smooth(x, y, GRASS, RIVER_WATER);
+                smooth(x, y, RIVER_WATER, GRASS);
                 smooth(x, y, LAKE_WATER, GRASS);
             }
         }
@@ -334,7 +342,7 @@ void World::smooth(int x, int y, TileName innerTile, TileName outerTile)
     }
 }
 
-void World::draw(Vector2<double> position, Vector2f viewDistance)
+void World::draw(Vector2<double> position, Vector2f viewDistance, Time totalTime)
 {
     int X = ((position.x - ((int)position.x % TILESIZE)) / TILESIZE) - (viewDistance.x);
     int Y = ((position.y - ((int)position.y % TILESIZE)) / TILESIZE) - (viewDistance.y);
@@ -363,10 +371,107 @@ void World::draw(Vector2<double> position, Vector2f viewDistance)
 
                 tileSprite.setTexture(txtptr->at(tileDataptr->at(tile).getTextureIndex()));
                 tileSprite.setPosition(tileDrawPos);
+
+                if (tileDataptr->at(tile).getFrameTime() > -1)
+                {
+                    int frame = (int)(totalTime.asMilliseconds() / tileDataptr->at(tile).getFrameTime()) % (tileDataptr->at(tile).getNumberOfFrames());
+                    tileSprite.setTextureRect(IntRect(0, frame * TILESIZE, TILESIZE, TILESIZE));
+                }
+
                 window->draw(tileSprite);
+
+                if (tile == LAKE_WATER || tile == BEACH || tile == ROCK || tile == RIVER_WATER)
+                {
+                    Sprite overlay;
+                    overlay.setPosition(tileSprite.getPosition());
+
+                    Overlay index = NONE;
+
+                    bool up = false;
+                    bool down = false;
+                    bool left = false;
+                    bool right = false;
+
+                    right = isGrassLike(x + 1, y);
+                    left = isGrassLike(x - 1, y);
+                    down = isGrassLike(x, y + 1);
+                    up = isGrassLike(x, y - 1);
+
+                    if (up || down || left || right)
+                    {
+                        if (down && left && right)
+                            index = DOWN_LEFT_RIGHT;
+                        else if (up && down && left)
+                            index = UP_DOWN_LEFT;
+                        else if (up && down && right)
+                            index = UP_DOWN_RIGHT;
+                        else if (up && right && left)
+                            index = UP_RIGHT_LEFT;
+                        else if (down && left)
+                            index = DOWN_LEFT;
+                        else if (down && right)
+                            index = DOWN_RIGHT;
+                        else if (up && left)
+                            index = UP_LEFT;
+                        else if (up && right)
+                            index = UP_RIGHT;
+                        else if (up)
+                            index = UP;
+                        else if (down)
+                            index = DOWN;
+                        else if (left)
+                            index = LEFT;
+                        else if (right)
+                            index = RIGHT;
+
+                        if (index != NONE)
+                            overlay.setTexture(txtptr->at((int)index));
+
+                        window->draw(overlay);
+                    }
+                    else
+                    {
+                        bool topleft = false;
+                        bool topright = false;
+                        bool bottomleft = false;
+                        bool bottomright = false;
+
+                        if (isGrassLike(x - 1, y - 1))
+                            topleft = true;
+                        if (isGrassLike(x + 1, y - 1))
+                            topright = true;
+                        if (isGrassLike(x - 1, y + 1))
+                            bottomleft = true;
+                        if (isGrassLike(x + 1, y + 1))
+                            bottomright = true;
+
+                        if (topleft)
+                        {
+                            overlay.setTexture(txtptr->at((int)TOPLEFT));
+                            window->draw(overlay);
+                        }
+                        if (topright)
+                        {
+                            overlay.setTexture(txtptr->at((int)TOPRIGHT));
+                            window->draw(overlay);
+                        }
+                        if (bottomleft)
+                        {
+                            overlay.setTexture(txtptr->at((int)BOTTOMLEFT));
+                            window->draw(overlay);
+                        }
+                        if (bottomright)
+                        {
+                            overlay.setTexture(txtptr->at((int)BOTTOMRIGHT));
+                            window->draw(overlay);
+                        }
+                    }
+                }
             }
         }
     }
+
+    previousDrawTime = totalTime;
 }
 
 void World::printWorld()

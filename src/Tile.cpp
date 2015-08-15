@@ -2,7 +2,8 @@
 
 using namespace sf;
 
-Tile::Tile(std::string _name, int _textureIndex, Vector2f _offset, Vector2f _tileSize, Vector2f _unwalkableOffset, Vector2f _unwalkableSize, Color _color)
+Tile::Tile(std::string _name, int _textureIndex, Vector2f _offset, Vector2f _tileSize, Vector2f _unwalkableOffset,
+           Vector2f _unwalkableSize, Color _color, int _numberOfFrames, int _frameTime)
 {
     name = _name;
     textureIndex = _textureIndex;
@@ -11,4 +12,6 @@ Tile::Tile(std::string _name, int _textureIndex, Vector2f _offset, Vector2f _til
     unwalkableOffset = _unwalkableOffset;
     unwalkableSize = _unwalkableSize;
     color = _color;
+    numberOfFrames = _numberOfFrames;
+    frameTime = _frameTime;
 }
