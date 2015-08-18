@@ -6,7 +6,7 @@
 
 using namespace sf;
 
-const int WORLDSIZE = 512;
+const int WORLDSIZE = 512; //defualt: 512, max: 1435
 const int TILESIZE  = 32;
 
 class World
@@ -15,13 +15,15 @@ class World
         World();
         void initialize(int seed, std::vector<Tile>* tileDataptr, std::vector<Texture>* txtptr, RenderWindow* window);
 
-        void printWorld();
         Image getWorldMap(Vector2f playerPosition);
         TileName getTile(int x, int y);            // These set and get tiles by global
         void setTile(int x, int y, TileName tile); // coordinates (0, 0) to (511, 511)
         bool isGrassLike(int x, int y);            // returns true for certain tiles that look like grass (GRASS, TREE, etc)
         void setSeed(int _seed) { seed = _seed; }
         int getSeed() { return seed; }
+
+        void loadWorld(std::string filename);
+        void saveWorld(std::string filename);
 
         //Main generation methods
         void generateWorld();

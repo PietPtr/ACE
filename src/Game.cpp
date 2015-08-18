@@ -23,7 +23,7 @@ void Game::initialize()
     loadTextures();
     loadTileData();
     world.initialize(randint(0, 65536), &tileData, &txt, window);
-    world.generateWorld(); //loadworld
+    world.generateWorld();
 }
 
 void Game::update()
@@ -49,6 +49,14 @@ void Game::update()
             if (event.key.code == Keyboard::F)
             {
                 showFPS = !showFPS;
+            }
+            if (event.key.code == Keyboard::K)
+            {
+                world.saveWorld("world.acesav");
+            }
+            if (event.key.code == Keyboard::L)
+            {
+                world.loadWorld("world.acesav");
             }
         }
         if (event.type == Event::Resized)
@@ -98,7 +106,7 @@ void Game::draw()
 
     if (Keyboard::isKeyPressed(Keyboard::Period))
     {
-        float zoom = 16.0;
+        float zoom = 16;
         view.zoom(zoom);
         viewDistance.x *= zoom;
         viewDistance.y *= zoom;

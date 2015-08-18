@@ -155,11 +155,11 @@ void World::generateSea()
     //Generate the sea and beaches
 
     //generation modifiers
-    float seaBaseAmp = 3 + randint(-100, 100, seed) / 100.0;                        //Higher -> higher waves
-    float seaMaxAmp = 250 + randint(-100, 100, seed);                               //Higher -> higher waves after randomization
-    float seaBaseFreq = 10.0 + randint(-500, 250, seed) / 100.0;                    //Higher -> less waves
-    float seaArchMod = 1000 + randint(0, 500, seed);                                //Higher -> wider sea
-    float seaHeight = 72 + randint(0, 32, seed);                                    //Higher -> coastline more north
+    float seaBaseAmp = 3 + randint(-100, 100, seed) / 100.0;                            //Higher -> higher waves
+    float seaMaxAmp = 250 + randint(-100, 100, seed);                                   //Higher -> higher waves after randomization
+    float seaBaseFreq = 10.0 + randint(-500, 250, seed) / 100.0;                        //Higher -> less waves
+    float seaArchMod = 1024 + randint(0, 500, seed) + ((WORLDSIZE / 512) - 1) * 1024;   //Higher -> wider sea
+    float seaHeight = 72 + randint(0, 32, seed) + ((WORLDSIZE / 512) - 1) * 64;        //Higher -> coastline more north
 
     float beachBaseFreq = 10.0 + randint(0, 1000, seed) / 100.0;
     float beachBaseAmp = 8 + randint(-100, 300, seed) / 100.0;
@@ -170,7 +170,7 @@ void World::generateSea()
 
     for (int x = 0; x < WORLDSIZE; x++)
     {
-        int X = x - 256;
+        int X = x - WORLDSIZE / 2;
         int Y = std::sin(X / seaBaseFreq) * seaBaseAmp * randint(100, seaMaxAmp, X / (2 * PI * seaBaseFreq) + seed) / 100.0;;
         Y = Y - (1.0/seaArchMod)*X*X + seaHeight;
         Y = Y < 0 ? 0 : Y;
@@ -196,7 +196,7 @@ void World::generateLakes()
     std::vector<Vector2f> lakeCenters;
     int numberOfLakes = 5;
     int lakeSpawnChance = 60;
-    float lowestLakeCenter = WORLDSIZE / 2.0;
+    float lowestLakeCenter = WORLDSIZE / 1.5;
     float maxLakeRadius = 16;
     float minLakeRadius = 8;
     float secLakeDist = 8;
@@ -474,34 +474,6 @@ void World::draw(Vector2<double> position, Vector2f viewDistance, Time totalTime
     previousDrawTime = totalTime;
 }
 
-void World::printWorld()
-{
-    int skip = 1;
-    for (int y = 0; y < WORLDSIZE; y += skip)
-    {
-        for (int x = 0; x < WORLDSIZE; x += skip)
-        {
-            switch(getTile(x, y))
-            {
-            case(0):
-                std::cout << "G";
-                break;
-            case(1):
-                std::cout << "T";
-                break;
-            case(2):
-                std::cout << "~";
-                break;
-            default:
-                std::cout << " ";
-                break;
-            }
-        }
-        std::cout << "\n";
-    }
-
-}
-
 Image World::getWorldMap(Vector2f playerPosition)
 {
     Image worldMap;
@@ -512,8 +484,14 @@ Image World::getWorldMap(Vector2f playerPosition)
         for (int x = 0; x < WORLDSIZE; x++)
         {
             //std::cout << tileDataptr->at(getTile(x, y)).getName() << "\n";
-            Color pixelColor = tileDataptr->at(getTile(x, y)).getColor();
+            TileName tile = getTile(x, y);
+
+            Color pixelColor = tileDataptr->at(tile).getColor();
             worldMap.setPixel(x, y, pixelColor);
+            if (tile == TREE && y > 0)
+            {
+                worldMap.setPixel(x, y - 1, Color(31, 200, 1));
+            }
         }
     }
     int markerX = (int)(playerPosition.x / TILESIZE);
@@ -529,3 +507,47 @@ Image World::getWorldMap(Vector2f playerPosition)
 
     return worldMap;
 }
+
+void World::saveWorld(std::string filename)
+{
+    std::ofstream saveFile;
+    saveFile.open("saves/" + filename);
+
+    for (int y = 0; y < WORLDSIZE; y++)
+    {
+        for (int x = 0; x < WORLDSIZE; x++)
+        {
+            unsigned char firstValue = getTile(x, y) / 256;
+            unsigned char secndValue = getTile(x, y) % 256;
+            saveFile << firstValue << secndValue;
+        }
+    }
+
+    saveFile.close();
+}
+
+void World::loadWorld(std::string filename)
+{
+    std::string line;
+    std::ifstream saveFile("saves/" + filename);
+
+    while(!saveFile.eof())
+    {
+        std::string line;
+        std::getline(saveFile, line);
+
+        //std::cout << line << "\n";
+        for (int i = 0; i < line.size(); i += 2)
+        {
+            TileName tile = (TileName)((int)line.at(i) * 256 + (int)line.at(i + 1));
+            int x = (i / 2) % WORLDSIZE;
+            int y = (i / 2) / WORLDSIZE;
+            setTile(x, y, tile);
+        }
+    }
+}
+
+
+
+
+
